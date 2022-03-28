@@ -13,6 +13,6 @@ class gamerating extends Model {
         return $this->belongsToMany('gamepedia\models\game', 'game2rating', 'rating_id', 'game_id');
     }
     public function ratingboard(){
-        return $this->hasMany('gamepedia\models\ratingboard', 'id');
+        return $this->belongsTo('gamepedia\models\ratingboard', 'rating_board_id', 'id');
     }
 }

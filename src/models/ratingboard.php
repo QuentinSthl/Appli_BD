@@ -10,6 +10,6 @@ class ratingboard extends Model {
     protected $primaryKey = 'id';
 
     public function rating(){
-        return $this->belongsTo('gamepedia\models\gamerating', 'rating_board_id');
+        return $this->belongsToMany('gamepedia\models\gamerating', 'game_rating', 'id', 'rating_board_id');
     }
 }
