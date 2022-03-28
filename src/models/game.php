@@ -19,7 +19,14 @@ class game extends Model {
     public function rating(){
         return $this->belongsToMany('gamepedia\models\gamerating', 'game2rating', 'game_id', 'rating_id');
     }
-    public function gamePublishers(){
+    public function publisher(){
         return $this->belongsToMany('gamepedia\models\company', 'game_publishers', 'game_id','comp_id');
+    }
+    public function ratingboard(){
+        return $this->belongsToMany('gamepedia\models\ratingboard', 'game2rating', 'game_id', 'rating_id')->withPivot('rating_board_id');
+    }
+
+    public function genre(){
+        return $this->belongsToMany('gamepedia\models\genre', 'game2genre', 'game_id', 'genre_id');
     }
 }

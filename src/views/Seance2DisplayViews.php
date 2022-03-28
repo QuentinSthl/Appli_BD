@@ -8,6 +8,7 @@ use gamepedia\models\gamerating;
 use gamepedia\models\platform;
 use gamepedia\models\character;
 use gamepedia\models\ratingboard;
+use gamepedia\models\genre;
 use Slim\Container;
 
 //define('SCRIPT_ROOT', str_replace(dirname(getcwd()) . DIRECTORY_SEPARATOR, (((!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/')), getcwd()));
@@ -230,34 +231,49 @@ class Seance2DisplayViews {
         $content = '<a href="/Seance2">Accueil</a><br>';
         $content .= '<a href="/Seance2/Q8">Question 8</a>';
         $content .= '<h1> Q7: les jeux dont le nom débute par Mario, publiés par une compagnie dont le nom contient "Inc." et dont le rating initial contient "3+"</h1>';
-        //get games starting with Mario and published by a company starting with Inc. and with a rating starting with 3+
-        $games = Game::select('*')->where('name','like','Mario%')->get();
         $content .= "<br><ul>";
-        foreach ($games as $game) {
-            $name = $game['name'];
-            $publisher = $game->game_publisher;
-            $content .= "<li>Jeu : $name</li>";
-            foreach ($publisher as $publishers) {
-                $content .= "<ul>";
-                $publishername = $publishers['name'];
-                if(str_contains($publishername,'Inc.')){
-                    $content .= "<li>Compagnie : $publishername</li>";
-                }
-                else{
-                    $content .= "<li>Pas de compagnie</li>";
-                }
-                $content .= '</ul>';
-            }
-            $rating = $game->rating;
-            foreach ($rating as $ratings) {
-                $content .= "<ul>";
-                $ratingname = $ratings['name'];
-                if(str_contains($ratingname,'3+')){
-                    $content .= "<li>Rating : $ratingname</li>";
-                }
-                $content .= '</ul>';
-            }
+        foreach ($games = Game::select('*')->where('name','like','Mario%')->whereHas('publisher', function($query){
+            $query->where('name','like','%Inc%');
+        })->whereHas('rating', function($query){
+            $query->where('name','like','%3+%');
+        })->get() as $game) {
+            $content .= "<ul>";
+            $content .= "<li>Jeu : $game[name]</li>";
+            $content .= '</ul>';
         }
+        return $content;
+    }
+
+    function htmlQuestion8():string {
+        $content = '<a href="/Seance2">Accueil</a><br>';
+        $content .= '<a href="/Seance2/Q9">Question 9</a>';
+        $content .= '<h1> Q8: les jeux dont le nom débute Mario, publiés par une compagnie dont le nom contient "Inc", dont le rating initial contient "3+" et ayant reçu un avis de la part du rating board nommé "CERO"</h1>';
+        $content .= "<br><ul>";
+        foreach ($games = Game::select('*')->where('name','like','Mario%')->whereHas('publisher', function($query){
+            $query->where('name','like','%Inc.%');
+        })->whereHas('rating', function($query){
+            $query->where('name','like','%3+%');
+        })->whereHas('rating.ratingboard', function($query){
+            $query->where('name','like','%CERO%');
+        })->get() as $game) {
+
+            $content .= "<ul>";
+            $content .= "<li>Jeu : $game[name]</li>";
+            $content .= '</ul>';
+        }
+        return $content;
+    }
+
+    function htmlQuestion9(): string {
+        $content = '<a href="/Seance2">Accueil</a><br>';
+        $content .= '<h1> Q9:ajouter un nouveau genre de jeu, et l\'associer aux jeux 12, 56, 12, 345</h1>';
+        //creation d'un nouveau genre de jeu et l'associer aux jeux 12, 56, 12, 345
+        $genre = new genre();
+        $genre->name = 'Shooter game';
+        $genre->save();
+        $games = Game::find([12,56,12,345]);
+        $genre->games()->saveMany($games);
+
         return $content;
     }
 }
