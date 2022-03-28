@@ -1,0 +1,7 @@
+/vendor/
+/.htaccess.old
+/virtualhost
+/gamepedia.code-workspace
+/composer-setup.php
+/composer.lock
+/composer.phar
