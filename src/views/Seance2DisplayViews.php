@@ -251,9 +251,9 @@ class Seance2DisplayViews {
         $content .= "<br><ul>";
         foreach ($games = Game::select('*')->where('name','like','Mario%')->whereHas('publisher', function($query){
             $query->where('name','like','%Inc.%');
-        })->whereHas('rating', function($query){
+        })->whereHas('gamerating', function($query){
             $query->where('name','like','%3+%');
-        })->whereHas('rating.ratingboard', function($query){
+        })->whereHas('gamerating.ratingboard', function($query){
             $query->where('name','like','%CERO%');
         })->get() as $game) {
 
