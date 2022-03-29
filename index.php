@@ -9,6 +9,7 @@ use Slim\App;
 use Slim\Container;
 use gamepedia\controllers\Seance1Controller;
 use gamepedia\controllers\Seance2Controller;
+use gamepedia\controllers\Seance3Controller;
 use Illuminate\Database\Capsule\Manager as DB;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -46,6 +47,17 @@ $app->get('/Seance2/Q7', Seance2Controller::class . ':Question7')->setName('Sean
 $app->get('/Seance2/Q8', Seance2Controller::class . ':Question8')->setName('Seance2Q8');
 $app->get('/Seance2/Q9', Seance2Controller::class . ':Question9')->setName('Seance2Q9');
 
+
+$app->get('/Seance3', Seance3Controller::class . ':Accueil')->setName('Seance3Accueil');
+$app->get('/Seance3/Q1', Seance3Controller::class . ':Question1')->setName('Seance3Q1');
+$app->get('/Seance3/Q2', Seance3Controller::class . ':Question2')->setName('Seance3Q2');
+$app->get('/Seance3/Q3', Seance3Controller::class . ':Question3')->setName('Seance3Q3');
+$app->get('/Seance3/Q4', Seance3Controller::class . ':Question4')->setName('Seance3Q4');
+$app->get('/Seance3/Q5', Seance3Controller::class . ':Question5')->setName('Seance3Q5');
+$app->get('/Seance3/Q6', Seance3Controller::class . ':Question6')->setName('Seance3Q6');
+$app->get('/Seance3/Q7', Seance3Controller::class . ':Question7')->setName('Seance3Q7');
+$app->get('/Seance3/Q8', Seance3Controller::class . ':Question8')->setName('Seance3Q8');
+$app->get('/Seance3/Q9', Seance3Controller::class . ':Question9')->setName('Seance3Q9');
 
 
 try {

@@ -12,11 +12,10 @@ class game extends Model {
     public function characters(){
         return $this->belongsToMany('gamepedia\models\character', 'game2character', 'game_id', 'character_id');
     }
-
     public function company(){
         return $this->belongsToMany('gamepedia\models\company', 'game_developers', 'game_id','comp_id');
     }
-    public function rating(){
+    public function gamerating(){
         return $this->belongsToMany('gamepedia\models\gamerating', 'game2rating', 'game_id', 'rating_id');
     }
     public function publisher(){
