@@ -26,6 +26,8 @@ $db->addConnection(parse_ini_file($configuration['settings']['dbconf']));
 $db->setAsGlobal();
 $db->bootEloquent();
 
+DB::connection()->enableQueryLog();
+
 //routes Seance 1
 $app->get('/Seance1', Seance1Controller::class . ':Accueil')->setName('Seance1Accueil');
 $app->get('/Seance1/Q1', Seance1Controller::class . ':Question1')->setName('Seance1Q1');
@@ -66,5 +68,4 @@ try {
 	echo $e->getMessage();
 }
 
-?>
 
