@@ -10,6 +10,7 @@ use gamepedia\models\character;
 use gamepedia\models\ratingboard;
 use gamepedia\models\genre;
 use Slim\Container;
+use Illuminate\Database\Capsule\Manager as DB;
 
 //define('SCRIPT_ROOT', str_replace(dirname(getcwd()) . DIRECTORY_SEPARATOR, (((!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/')), getcwd()));
 define('SCRIPT_ROOT', "localhost");
@@ -243,7 +244,6 @@ class Seance3DisplayViews {
 
         $content .= '<p>Anciennes valeurs : <ul><li>0.01226019859314 secondes</li> <li>0.0097661018371582 secondes</li> <li>0.011689186096191 secondes</li></ul></p>';
 
-        //new p that says Apres index
         $content .= '<p>Apres index :</p>';
 
         $debut = microtime(true);
@@ -260,7 +260,6 @@ class Seance3DisplayViews {
         $content .= '<p>Temps d\'execution : ' . ($fin2 - $debut2) . ' secondes</p>';
         $content .= '<p>Nombre de compagnies : ' . $nbcompanies2 . '</p>';
 
-        //get companies from another country and measure time
         $debut3 = microtime(true);
         $companies = Company::where('location_country','Japan')->get();
         $fin3 = microtime(true);
@@ -273,25 +272,69 @@ class Seance3DisplayViews {
     }
     function htmlQuestion7(): string
     {
-        $content = '<a href="/Seance2">Accueil</a><br>';
-        $content .= '<a href="/Seance2/Q8">Question 8</a>';
+        $content = '<a href="/Seance3">Accueil</a><br>';
+        $content .= '<a href="/Seance3/Q8">Question 8</a>';
         $content .= '<h1> Q7: les jeux dont le nom débute par Mario, publiés par une compagnie dont le nom contient "Inc." et dont le rating initial contient "3+"</h1>';
         $content .= "<br><ul>";
-        foreach ($games = Game::select('*')->where('name','like','Mario%')->whereHas('publisher', function($query){
-            $query->where('name','like','%Inc%');
-        })->whereHas('rating', function($query){
-            $query->where('name','like','%3+%');
-        })->get() as $game) {
-            $content .= "<ul>";
-            $content .= "<li>Jeu : $game[name]</li>";
-            $content .= '</ul>';
-        }
+
+
+        //get games with name containing Mario
+        $games = Game::select('*')->where('name','like','Mario%')->get();
+        //show querylog
+        $content .= '<li>' . DB::getQueryLog()[0]['query'] . '</li>';
+
+
+
+        //get name of characters from game with id 12342
+        $characters = Character::select('*')->whereHas('games',function($query){
+            $query->where('game_id','=',12342);
+        })->get();
+        //show querylog
+        $content .= '<li>' . DB::getQueryLog()[1]['query'] . '</li>';
+
+
+        //get the first character of a game that has a name containing Mario
+        $character = Character::select('*')->whereHas('games',function($query){
+            $query->where('name','like','%Mario%');
+        })->first();
+        //show querylog
+        $content .= '<li>' . DB::getQueryLog()[2]['query'] . '</li>';
+
+        //get all characters of a game that has a name containing Mario
+        $characters = Character::select('*')->whereHas('games',function($query){
+            $query->where('name','like','%Mario%');
+        })->get();
+        //show querylog
+        $content .= '<li>' . DB::getQueryLog()[3]['query'] . '</li>';
+
+        //get games developed by a company with a name that contains Sony
+        $games = Game::select('*')->whereHas('company',function ($query){
+            $query->where('name','like','%Sony%');
+        })->get();
+        //show querylog
+        $content .= '<li>' . DB::getQueryLog()[4]['query'] . '</li>';
+
+
+        $content .= "</ul>";
+        $content .= '<h1>Avec Chargement lié</h1>';
+        $content .= "<br><ul>";
+        //get characters of a game that has a name containing Mario whith bound loading
+        $characters = Character::where('name','like','%Mario%')->with('games')->get();
+        //show querylog
+        $content .= '<li>' . DB::getQueryLog()[5]['query'] . '</li>';
+
+        //get games developed by a company with a name that contains Sony whith bound loading
+        $games = Game::where('name','like','$Sony%')->with('company')->get();
+        //show querylog
+        $content .= '<li>' . DB::getQueryLog()[6]['query'] . '</li>';
+
+
         return $content;
     }
 
     function htmlQuestion8():string {
-        $content = '<a href="/Seance2">Accueil</a><br>';
-        $content .= '<a href="/Seance2/Q9">Question 9</a>';
+        $content = '<a href="/Seance3">Accueil</a><br>';
+        $content .= '<a href="/Seance3/Q9">Question 9</a>';
         $content .= '<h1> Q8: les jeux dont le nom débute Mario, publiés par une compagnie dont le nom contient "Inc", dont le rating initial contient "3+" et ayant reçu un avis de la part du rating board nommé "CERO"</h1>';
         $content .= "<br><ul>";
         foreach ($games = Game::select('*')->where('name','like','Mario%')->whereHas('publisher', function($query){

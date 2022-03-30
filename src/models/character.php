@@ -11,6 +11,6 @@ class character extends Model {
 
 
     public function games(){
-        return $this->belongsToMany('gamepedia\models\game', 'game', 'character_id', 'game_id');
+        return $this->belongsToMany('gamepedia\models\game', 'game2character', 'character_id', 'game_id');
     }
 }
