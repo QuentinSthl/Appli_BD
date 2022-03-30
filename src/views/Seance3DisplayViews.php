@@ -331,37 +331,4 @@ class Seance3DisplayViews {
 
         return $content;
     }
-
-    function htmlQuestion8():string {
-        $content = '<a href="/Seance3">Accueil</a><br>';
-        $content .= '<a href="/Seance3/Q9">Question 9</a>';
-        $content .= '<h1> Q8: les jeux dont le nom débute Mario, publiés par une compagnie dont le nom contient "Inc", dont le rating initial contient "3+" et ayant reçu un avis de la part du rating board nommé "CERO"</h1>';
-        $content .= "<br><ul>";
-        foreach ($games = Game::select('*')->where('name','like','Mario%')->whereHas('publisher', function($query){
-            $query->where('name','like','%Inc.%');
-        })->whereHas('rating', function($query){
-            $query->where('name','like','%3+%');
-        })->whereHas('rating.ratingboard', function($query){
-            $query->where('name','like','%CERO%');
-        })->get() as $game) {
-
-            $content .= "<ul>";
-            $content .= "<li>Jeu : $game[name]</li>";
-            $content .= '</ul>';
-        }
-        return $content;
-    }
-
-    function htmlQuestion9(): string {
-        $content = '<a href="/Seance2">Accueil</a><br>';
-        $content .= '<h1> Q9:ajouter un nouveau genre de jeu, et l\'associer aux jeux 12, 56, 12, 345</h1>';
-        //creation d'un nouveau genre de jeu et l'associer aux jeux 12, 56, 12, 345
-        $genre = new genre();
-        $genre->name = 'Shooter game';
-        $genre->save();
-        $games = Game::find([12,56,12,345]);
-        $genre->games()->saveMany($games);
-
-        return $content;
-    }
 }

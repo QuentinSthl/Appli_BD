@@ -28,4 +28,8 @@ class game extends Model {
     public function genre(){
         return $this->belongsToMany('gamepedia\models\genre', 'game2genre', 'game_id', 'genre_id');
     }
+
+    public function comments(){
+        return $this->hasMany('gamepedia\models\comment', 'game_id');
+    }
 }
